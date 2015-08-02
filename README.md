@@ -32,13 +32,6 @@ You don't need to tell this script about your database tables unless your table 
 match your Ember models/routes (see config section at top of script)
 ```
 
-
-Further reading: 
-* http://mojolicio.us/perldoc
-* http://emberjs.com
-* http://search.cpan.org/~dbook/Mojo-SQLite   
-* https://www.sqlite.org
-
 ```
 To have Ember grok database errors, you'll want to set up your adapter with an ajaxError
 member like so:
@@ -61,3 +54,8 @@ And then in your route, do something like this:
 todo.save().then(function() {}, function(response) { alert("Update failed: " + response);});
 ```
 
+Further reading: 
+* http://mojolicio.us/perldoc
+* http://emberjs.com
+* http://search.cpan.org/~dbook/Mojo-SQLite   
+* https://www.sqlite.org
