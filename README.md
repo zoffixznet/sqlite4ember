@@ -51,7 +51,18 @@ export default DS.RESTAdapter.extend({
 
 And then in your route, do something like this:
 
-todo.save().then(function() {}, function(response) { alert("Update failed: " + response);});
+export default Ember.Route.extend({
+     model: function() {
+        return this.store.find('widget').then(null, function(response) { alert("Query failed: " + response.errors[0].detail);});;
+    },
+
+    ...
+
+});
+
+
+response.errors[0].detail will hold the actual error message returned by the database library
+
 ```
 
 Further reading: 

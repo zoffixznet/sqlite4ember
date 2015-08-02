@@ -23,6 +23,22 @@ helper model_to_table => sub {
 
 ###################################################
 
+if (! -f $dbfile) {
+  print STDERR "database $dbfile does not exist.  Create one like so:\n  sqlite3 $dbfile \"create table test (id int primary key, stuff text)\"\n";
+  exit 1;
+}
+if (! -r $dbfile) {
+  print STDERR "database $dbfile exists but is not readable.\n";
+  exit 1;
+}
+
+my $d = Mojo::SQLite->new($dbfile);
+if(! $d->db->ping) {
+  print STDERR "Failed to open database $dbfile.";
+  exit 1;
+}
+$d->db->disconnect;
+
 helper sqlite => sub { state $sql = Mojo::SQLite->new($dbfile) };
 
 # headers for cache control and cross-site configuration so db web interface can be on 
@@ -42,7 +58,7 @@ helper err => sub {
   my $error = $_[1];
   if($error) {
     say "Database Error: $error";
-    $c->render(json => { "errors" => $error }, status => 422);
+    $c->render(json => { "errors" => { "database" => [$error] }}, status => 422);
   } else {
     return undef; # $error was empty, so we can do:  $c->err($error) || some_success_function
   }
@@ -59,7 +75,11 @@ options '/*all' => sub {
 get '/#table' => sub {
   my $c = shift;
   my $table = $c->stash('table');
-  $c->render(json => { $table => $c->sqlite->db->query("select * from $table")->hashes });
+  my $error;
+  $c->sqlite->db->query("select * from $table", sub { 
+    my ($db, $error, $results) = @_;
+    $c->err($error) || $c->render(json => { $table => $results->hashes });
+  });
 };
 
 # query one record
@@ -67,7 +87,10 @@ get '/#table/#id' => sub {
   my $c = shift;
   my $table = $c->stash('table');
   my $id = $c->stash('id');
-  $c->render(json => $c->sqlite->db->query("select * from $table where id = $id")->hash);
+  $c->sqlite->db->query("select * from $table where id = ?", $id, sub {
+    my ($db, $error, $results) = @_;
+    $c->err($error) || $c->render(json => { $table => $results->hash });
+  });
 };
  
 # update existing record
@@ -98,7 +121,6 @@ post '/#table' => sub {
   my $error;
   foreach my $k (keys %$newrecord) {
     my $t = $c->model_to_table($k);
-    say "table: $t";
     my (@vars, @vals, @q);
     foreach my $l (keys %{$$newrecord{$k}}) {
       push @vars, $l;
