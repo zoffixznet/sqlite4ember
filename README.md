@@ -1,7 +1,11 @@
 # sqlite4ember
 
-A standalone (web server built in), single-script RESTful web interface to an Sqlite 
-datebase (single file, daemonless) for the Ember MVC framework (Ember Data specifically).  
+A standalone, single-script RESTful web interface to an SQLite 
+datebase for the Ember Data portion of the Ember MVC framework.
+
+You do not need a separate web or database server.  This script embeds the Mojolicious web server,
+and SQLite is a single-file daemonless SQL database.
+
 Should be easily adaptable to other MVCs.  Great for front end development.  Feasible for
 small production apps, but you'll need to add authentication.
 
