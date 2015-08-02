@@ -13,6 +13,8 @@ Using a copy of my production work database as-is, I used several parallel runs 
 
 ## Prerequisites
 Install sqlite with your OS's package manager or grab it at https://www.sqlite.org/
+
+Then install some Perl modules:
 ```
 perl -MCPAN -e "install Mojolicious"
 perl -MCPAN -e "install Mojo::SQLite"
@@ -26,6 +28,9 @@ create table test (id integer primary key, stuff text)
 control-D
 ```
 
+You don't need to tell this script about your database tables unless your table names don't
+match your Ember models/routes (see config section at top of script)
+
 ## Run the web server
 ```
 ./sqlite4ember.pl daemon -l http://*:8000
@@ -34,11 +39,11 @@ control-D
 
 URLs are automatically mapped to database tables, with table names at the root of the URL:
 
-http://localhost:8000/widgets     (query all widgets)
-http://localhost:8000/widgets/45  (query widget 45)
+* http://localhost:8000/widgets     (query all widgets)
+* http://localhost:8000/widgets/45  (query widget 45)
 
-You don't need to tell this script about your database tables unless your table names don't
-match your Ember models/routes (see config section at top of script)
+## Ember code
+
 
 To have Ember grok database errors, you'll want to set up your adapter with an ajaxError
 member like so:
@@ -56,9 +61,11 @@ export default DS.RESTAdapter.extend({
         }
     }
 });
+```
 
 And then in your route, do something like this:
 
+```
 export default Ember.Route.extend({
      model: function() {
         return this.store.find('widget').then(null, function(response) { alert("Query failed: " + response.errors[0].detail);});;
