@@ -74,11 +74,9 @@ export default Ember.Route.extend({
     ...
 
 });
-
+```
 
 response.errors[0].detail will hold the actual error message returned by the database library
-
-```
 
 ## Further reading
 * http://mojolicio.us/perldoc
