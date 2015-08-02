@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 use Mojolicious::Lite;
 use Mojo::SQLite;
-use Data::Dumper;
 use Mojo::JSON qw(decode_json);
 
 ##### configurable section #######################
