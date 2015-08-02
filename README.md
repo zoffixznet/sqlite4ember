@@ -5,46 +5,45 @@ datebase (single file, daemonless) for the Ember MVC framework (Ember Data speci
 Should be easily adaptable to other MVCs.  Great for front end development.  Feasible for
 small production apps, but you'll need to add authentication.
 
-```
-Performance: Small queries on small tables take 5ms or less on my system according to
-             Chrome's developer console
 
-             Using a copy of my production work database as-is, I used several parallel runs of "curl -s"
-             to individually query all 78,000 rows of a table with over 30 columns and managed around 3000/second
-             in the default single-instance non-preforking daemon mode.  
-```
+## Performance
+Small queries on small tables take 5ms or less on my system according to Chrome's developer console
 
+Using a copy of my production work database as-is, I used several parallel runs of "curl -s" to individually query all 78,000 rows of a table with over 30 columns and managed around 3000/second in the default single-instance non-preforking daemon mode.  
+
+## Prerequisites
+Install sqlite with your OS's package manager or grab it at https://www.sqlite.org/
 ```
-Prerequisites: 
-    perl -MCPAN -e "install Mojolicious"
-    perl -MCPAN -e "install Mojo::SQLite"
-    Install sqlite with your OS's package manager or grab it at https://www.sqlite.org/
+perl -MCPAN -e "install Mojolicious"
+perl -MCPAN -e "install Mojo::SQLite"
 ```
 
+## Database Creation
 ```
-Database creation: sqlite3 <filename>
-                   create table test (id integer primary key, stuff text)
-                   <inserts and whatever other standard SQL you want>
-                   control-D
-
-Run the web server: ./sqlite4ember.pl daemon -l http://*:8000
-  (https also works if you have the required perl modules)
+sqlite3 <filename>
+create table test (id integer primary key, stuff text)
+<inserts and whatever other standard SQL you want>
+control-D
 ```
 
+## Run the web server
 ```
+./sqlite4ember.pl daemon -l http://*:8000
+(https also works if you have the required perl modules)
+```
+
 URLs are automatically mapped to database tables, with table names at the root of the URL:
 
-  http://localhost:8000/widgets     (query all widgets)
-  http://localhost:8000/widgets/45  (query widget 45)
+http://localhost:8000/widgets     (query all widgets)
+http://localhost:8000/widgets/45  (query widget 45)
 
 You don't need to tell this script about your database tables unless your table names don't
 match your Ember models/routes (see config section at top of script)
-```
 
-```
 To have Ember grok database errors, you'll want to set up your adapter with an ajaxError
 member like so:
 
+```
 export default DS.RESTAdapter.extend({
     host: 'http://localhost:3000',
     ajaxError: function(jqXHR) {
@@ -74,7 +73,7 @@ response.errors[0].detail will hold the actual error message returned by the dat
 
 ```
 
-Further reading: 
+## Further reading
 * http://mojolicio.us/perldoc
 * http://emberjs.com
 * http://search.cpan.org/~dbook/Mojo-SQLite   
