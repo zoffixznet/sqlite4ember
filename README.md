@@ -6,9 +6,9 @@ datebase for the Ember Data portion of the Ember MVC framework.
 You do not need a separate web or database server.  This script embeds the Mojolicious web server,
 and SQLite is a single-file daemonless SQL database.
 
-Should be easily adaptable to other MVCs.  Great for front end development.  Feasible for
-small production apps, but you'll need to add authentication.
-
+* Should be easily adaptable to other MVCs.  
+* Great for front end development.  
+* Feasible for smaller production apps in terms of stability and performance, but you'll need to add authentication.
 
 ## Performance
 Small queries on small tables take 5ms or less on my system according to Chrome's developer console
