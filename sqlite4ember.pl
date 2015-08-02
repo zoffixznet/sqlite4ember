@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use Mojolicious::Lite;
 use Mojo::SQLite;
+use Data::Dumper;
 use Mojo::JSON qw(decode_json);
 
 ##### configurable section #######################
@@ -70,6 +71,20 @@ options '/*all' => sub {
   my $c = shift;
   $c->render(text => 'ok', status => 200);
 };
+
+# list available tables
+get '/' => sub {
+  my $c = shift;
+  my @tables;
+  my $tabsth = $c->sqlite->db->dbh->table_info();
+  while (my (undef, undef, $name, $type, undef ) = $tabsth->fetchrow_array()) {
+    push @tables, $name if $type eq "TABLE" && $name ne "sqlite_sequence";
+  }
+  $c->stash(tables => \@tables);
+  $c->stash(baseurl => $c->url_for('/')->to_abs);
+  $c->render('index');
+};
+
 
 # query entire table
 get '/#table' => sub {
@@ -146,4 +161,17 @@ del '/#table/#id' => sub {
 
 
 app->start;
+__DATA__
 
+@@ index.html.ep
+<!DOCTYPE html>
+<html>
+  <head><title>SQLite4Ember Table List</title></head>
+  <body>
+    <h1><a href=https://github.com/groovy9/sqlite4ember>SQLite4Ember</a></h1>
+    <h2>Tables found in database:</h1>
+    % for my $t (@$tables) {
+      <a href=<%=$baseurl%><%=$t%>><%=$t%></a><br>
+    % }
+  </body>
+</html>
