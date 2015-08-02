@@ -28,12 +28,12 @@ perl -MCPAN -e "install IO::Socket::SSL" # (only if you want access via https)
 ## Database Creation
 ```
 sqlite3 <filename>
-create table test (id integer primary key, stuff text)
+create table test (id integer primary key autoincrement, stuff text)
 <inserts and whatever other standard SQL you want>
 control-D
 ```
 
-Every table needs an id column with type "integer primary key".
+Every table needs an id column with type "integer primary key autoincrement".
 
 You don't need to tell this script about your database tables unless your table names don't
 match your Ember models/routes (see config section at top of script)
