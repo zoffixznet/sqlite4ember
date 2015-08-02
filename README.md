@@ -1,9 +1,9 @@
 # sqlite4ember
 
-A standalone (no web server needed), single-script RESTful web interface to an Sqlite 
-datebase for the Ember MVC framework (Ember Data specifically).  Should be easily adaptable 
-to other MVCs.  Great for front end development.  Avoid production without adding 
-authentication and probably a bunch more sanity checking.
+A standalone (web server built in), single-script RESTful web interface to an Sqlite 
+datebase (single file, daemonless) for the Ember MVC framework (Ember Data specifically).  
+Should be easily adaptable to other MVCs.  Great for front end development.  Avoid 
+production without adding authentication and probably a bunch more sanity checking.
 
 ```
 Database creation: sqlite3 <filename>
