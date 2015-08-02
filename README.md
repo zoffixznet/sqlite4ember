@@ -25,8 +25,8 @@ Run the web server: ./sqlite4ember.pl daemon -l http://*:8000
 ```
 URLs are automatically mapped to database tables, with table names at the root of the URL:
 
-  http://localhost:8000/widgets  (query all widgets)
-  http://localhost:8000/widgets/45  (query widgets 45)
+  http://localhost:8000/widgets     (query all widgets)
+  http://localhost:8000/widgets/45  (query widget 45)
 
 You don't need to tell this script about your database tables unless your table names don't
 match your Ember models/routes (see config section at top of script)
