@@ -8,6 +8,10 @@ small production apps, but you'll need to add authentication.
 ```
 Performance: Small queries on small tables take 5ms or less on my system according to
              Chrome's developer console
+
+             Using a copy of my production work database as-is, I used several parallel runs of "curl -s"
+             to individually query all 78,000 rows of a table with over 30 columns and managed around 3000/second
+             in the default single-instance non-preforking daemon mode.  
 ```
 
 ```
