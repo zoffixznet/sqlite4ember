@@ -89,8 +89,9 @@ get '/' => sub {
 get '/#table' => sub {
   my $c = shift;
   my $table = $c->stash('table');
+  my $i_table = $c->sqlite->db->dbh->quote_identifier( $table );
   my $error;
-  $c->sqlite->db->query("select * from $table", sub { 
+  $c->sqlite->db->query("select * from $i_table", sub { 
     my ($db, $error, $results) = @_;
     $c->err($error) || $c->render(json => { $table => $results->hashes });
   });
@@ -100,8 +101,9 @@ get '/#table' => sub {
 get '/#table/#id' => sub {
   my $c = shift;
   my $table = $c->stash('table');
+  my $i_table = $c->sqlite->db->dbh->quote_identifier( $table );
   my $id = $c->stash('id');
-  $c->sqlite->db->query("select * from $table where id = ?", $id, sub {
+  $c->sqlite->db->query("select * from $i_table where id = ?", $id, sub {
     my ($db, $error, $results) = @_;
     $c->err($error) || $c->render(json => { $table => $results->hash });
   });
@@ -114,15 +116,16 @@ put '/#table/#id' => sub {
   my $id = $c->stash('id');
   my $newrecord = decode_json($c->req->body); 
   my $error;
+  my $dbh = $c->sqlite->db->dbh;
   foreach my $k (keys %$newrecord) {
-    my $t = $c->model_to_table($k);
+    my $t = $dbh->quote_identifier( $c->model_to_table($k) );
     my (@vars, @vals);
     foreach my $l (keys %{$$newrecord{$k}}) {
-      push @vars, "$l = ?";
+      push @vars, $dbh->quote_identifier($l) . ' = ?';
       push @vals, $$newrecord{$k}{$l};
     }
-    my $sql = "update $t set " . join(',', @vars) . " where id = $id";
-    $c->sqlite->db->query("$sql", @vals, sub { $error = $_[1]; });
+    my $sql = "update $t set " . join(',', @vars) . ' where id = ?';
+    $c->sqlite->db->query($sql, @vals, $id, sub { $error = $_[1]; });
   }
   $c->err($error) || $c->render(json => { $table => {"id"  => $id}});
 };
@@ -133,11 +136,12 @@ post '/#table' => sub {
   my $table = $c->stash('table');
   my $newrecord = decode_json($c->req->body); 
   my $error;
+  my $dbh = $c->sqlite->db->dbh;
   foreach my $k (keys %$newrecord) {
-    my $t = $c->model_to_table($k);
+    my $t = $dbh->quote_identifier( $c->model_to_table($k) );
     my (@vars, @vals, @q);
     foreach my $l (keys %{$$newrecord{$k}}) {
-      push @vars, $l;
+      push @vars, $dbh->quote_identifier( $l );
       push @vals, $$newrecord{$k}{$l};
       push @q, '?';
     }
@@ -152,9 +156,10 @@ post '/#table' => sub {
 del '/#table/#id' => sub {
   my $c = shift;
   my $table = $c->stash('table');
+  my $i_table = $c->sqlite->db->dbh->quote_identifier( $table );
   my $id = $c->stash('id');
   my $error;
-  $c->sqlite->db->query("delete from $table where id = ?", $id, sub { $error = $_[1]; });
+  $c->sqlite->db->query("delete from $i_table where id = ?", $id, sub { $error = $_[1]; });
   $c->err($error) || $c->render(json => { $table => {"id" => $id}});
 };
 
